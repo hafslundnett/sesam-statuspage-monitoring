@@ -47,3 +47,7 @@ jobs:
         repository: 'sesam-statuspage-monitoring'
         command: push
         tags: '$(imagetag)'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathToPublish: $(Build.ArtifactStagingDirectory)
+        artifactName: sesam-statuspage-monitor
