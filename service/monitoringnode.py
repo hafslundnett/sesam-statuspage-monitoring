@@ -6,15 +6,18 @@ import logging
 import os
 import sys
 from emailsender import Emailsender
+from vault_client import VaultClient
 
 import requests
 
 __author__ = "Ravish Ranjan"
 
-required_env_vars = ["SESAM_API_URL", "JWT", "PAGE_ID", "COMPONENT_ID", "API_KEY"]
+required_env_vars = ["SESAM_API_URL", "PAGE_ID", "COMPONENT_ID"]
 optional_env_vars = ["GROUP_ID"]
-email_env_vars = ["RECIPIENTS", "SMTP_HOST", "SMTP_USERNAME", "SMTP_PASSWORD", "SMTP_SENDER"]
+email_env_vars = ["RECIPIENTS", "SMTP_HOST", "SMTP_USERNAME", "SMTP_SENDER"]
 status_page_base_url = 'https://api.statuspage.io/v1'
+
+load_vars_from_vault = ["API_KEY", "JWT", "SMTP_PASSWORD"]
 
 
 class AppConfig(object):
@@ -23,8 +26,17 @@ class AppConfig(object):
 
 config = AppConfig()
 
+hashivault = VaultClient()
+
 # load variables
 missing_env_vars = list()
+
+for env_var in load_vars_from_vault:
+    value = hashivault.ensure_has_value(f'sesam-extensions/kv/sesam-monitoring/{env_var}')
+    if not value:
+        missing_env_vars.append(env_var)
+    setattr(config, env_var, value)
+
 for env_var in required_env_vars:
     value = os.getenv(env_var)
     if not value:
@@ -39,7 +51,6 @@ for env_var in optional_env_vars:
 EmailFunctionality = False
 missing_email_env_vars = []
 for env_var in email_env_vars:
-    value = os.getenv(env_var)
     if value:
         if env_var == 'RECIPIENTS':
             setattr(config, 'RECIPIENTS', json.loads(value))#Get it as list from string.
