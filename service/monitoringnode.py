@@ -17,7 +17,7 @@ optional_env_vars = ["GROUP_ID"]
 email_env_vars = ["RECIPIENTS", "SMTP_HOST", "SMTP_USERNAME", "SMTP_SENDER"]
 status_page_base_url = 'https://api.statuspage.io/v1'
 
-load_vars_from_vault = ["API_KEY", "JWT", "SMTP_PASSWORD"]
+load_vars_from_vault = ["api_key", "jwt", "smtp_password"]
 
 
 class AppConfig(object):
@@ -71,7 +71,7 @@ logging.debug(f"SESAM instance name: {config.SESAM_API_URL}")
 def get_sesam_node_status():
     try:
         response = requests.get(url=config.SESAM_API_URL + "/api/health",
-                                headers={'Authorization': 'bearer ' + config.JWT})
+                                headers={'Authorization': 'bearer ' + config.jwt})
         if response.status_code == 200:
             return 'OK'
         else:
@@ -84,7 +84,7 @@ def get_sesam_node_status():
 def get_node_type():
     try:
         response = requests.get(url=config.SESAM_API_URL + '/api/datasets/config:aggregator-storage-node',
-                                headers={'Authorization': 'bearer ' + config.JWT})
+                                headers={'Authorization': 'bearer ' + config.jwt})
 
         if response.status_code == 200:
             return 'MULTI'
@@ -98,7 +98,7 @@ def get_node_type():
 def get_subnodes_status(subnodes):
     try:
         with requests.session() as session:
-            session.headers = {'Authorization': 'bearer ' + config.JWT}
+            session.headers = {'Authorization': 'bearer ' + config.jwt}
             problematic_subnodes = []
             for s in subnodes:
                 try:
@@ -115,8 +115,9 @@ def get_subnodes_status(subnodes):
 
 
 def get_subnodes_from_dataset():
-        response = requests.get(url=config.SESAM_API_URL + '/api/datasets/config:aggregator-storage-node/entities?deleted=false&history=false',
-                                headers={'Authorization': 'bearer ' + config.JWT})
+        response = requests.get(
+            url=config.SESAM_API_URL + '/api/datasets/config:aggregator-storage-node/entities?deleted=false&history=false',
+            headers={'Authorization': 'bearer ' + config.jwt})
         subnodes = ['microservices']
         for e in json.loads(response.content):
             if not e['type'].startswith('system:') and e['type'] != 'metadata':
@@ -151,7 +152,7 @@ def update_status_page(status_data):
     try:
         response = requests.patch(url=status_page_base_url + '/pages/' + config.PAGE_ID + '/components/' +
                                       config.COMPONENT_ID, data=json_data,
-                                  headers={'Accept': 'application/json', 'Authorization': config.API_KEY})
+                                  headers={'Accept': 'application/json', 'Authorization': config.api_key})
         if response.ok:
             logging.info(f"OK, the status page has been updated successfully for component_id : {config.COMPONENT_ID}")
         else:
@@ -167,7 +168,8 @@ def prepare_payload(status_data):
         else:
             try:
                 if EmailFunctionality:
-                    sender = Emailsender(config.SMTP_HOST, config.SMTP_USERNAME, config.SMTP_PASSWORD, config.SMTP_SENDER)
+                    sender = Emailsender(config.SMTP_HOST, config.SMTP_USERNAME, config.smtp_password,
+                                         config.SMTP_SENDER)
                     logging.info(sender.sendMail(config.RECIPIENTS, 'Problems with node {}'.format(config.SESAM_API_URL), status_data))
             except Exception as e:
                 logging.error('Failed to send email because of {}'.format(e))
