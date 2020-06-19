@@ -35,3 +35,19 @@ spec:
           limits:
             cpu: "500m"
             memory: "750Mi"
+        env:
+          - name: COMPONENT_ID
+            value: "7hkbjbyn8g5q"
+          - name: PAGE_ID
+            value: "p5k58vp9ll32"
+          - name: RECIPIENTS
+            value: "[\"gabriell.vig@sesam.io\", \"Feng.Luan@hafslund.no\", \"sesam.henvendelser@hafslund.no\", \"craig.seamons@sesam.io\", \"ole.dale@sesam.io\"]"
+          - name: SESAM_API_URL
+            value: "https://3c9170a1.sesam.cloud/api"
+          - name: SMTP_HOST
+            value: "smtp.office365.com:587"
+          - name: SMTP_SENDER
+            value: "SesamMailSender@hafslund.no"
+          - name: SMTP_USERNAME
+            value: "SesamMailSender@hafslund.no"
+
