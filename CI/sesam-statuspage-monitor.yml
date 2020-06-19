@@ -28,7 +28,7 @@ spec:
       - name: containerregistryprodsecret
       containers:
       - name: sesam-statuspage-monitoring # ENDRES PER APPLIKASJON
-        image: 'containerregistryprod.azurecr.io/sesam-statuspage-monitoringing:$(imagetag)' # ENDRES PER APPLIKASJON
+        image: 'containerregistryprod.azurecr.io/sesam-statuspage-monitoring:$(imagetag)' # ENDRES PER APPLIKASJON
         imagePullPolicy: Always
         resources:
           requests:
