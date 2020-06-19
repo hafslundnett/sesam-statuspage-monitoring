@@ -1,17 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
-
-
-variables:
-  - name: containerregistry
-    value: "ContainerRegistryProd"
-  - name: imagetag
-    value: $(Build.BuildNumber)
-
 metadata:
-  name: sesam-statuspage-monitoring # ENDRES PER APPLIKASJON
-  labels:
-    app: sesam-statuspage-monitoring # ENDRES PER APPLIKASJON
+  name: sesam-statuspage-monitoring
+spec:
+  selector:
+    matchLabels:
+      app: sesam-statuspage-monitoring
+  revisionHistoryLimit: 2
+  strategy:
+    type: Recreate
+  replicas: 1
 
 spec:
   replicas: 1
@@ -28,7 +26,7 @@ spec:
       - name: containerregistryprodsecret
       containers:
       - name: sesam-statuspage-monitoring # ENDRES PER APPLIKASJON
-        image: 'containerregistryprod.azurecr.io/sesam-statuspage-monitoring:$(imagetag)' # ENDRES PER APPLIKASJON
+        image: containerregistryprod.azurecr.io/sesam-statuspage-monitoring:imagetag
         imagePullPolicy: Always
         resources:
           requests:
