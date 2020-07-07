@@ -51,6 +51,7 @@ for env_var in optional_env_vars:
 EmailFunctionality = False
 missing_email_env_vars = []
 for env_var in email_env_vars:
+    value = os.getenv(env_var)
     if value:
         if env_var == 'RECIPIENTS':
             setattr(config, 'RECIPIENTS', json.loads(value))#Get it as list from string.
@@ -65,7 +66,7 @@ log_level = logging.getLevelName(os.environ.get('LOG_LEVEL', 'DEBUG'))  # defaul
 logging.basicConfig(level=log_level)
 
 logging.debug(datetime.datetime.now())
-logging.debug(f"SESAM instance name: {config.SESAM_API_URL}")
+logging.debug(f"SESAM instance name: {config.SESAM_API_URL}. Email functionality: {EmailFunctionality}")
 
 
 def get_sesam_node_status():
