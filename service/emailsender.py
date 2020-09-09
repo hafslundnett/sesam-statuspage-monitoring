@@ -11,7 +11,7 @@ class Emailsender:
         self.sender = sender
 
     def sendMail(self,recipients, subject, message):
-
+        return "Nope. I'm turned off"
         #Create message object instance
         msg = MIMEMultipart()
 
