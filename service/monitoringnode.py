@@ -82,18 +82,14 @@ def get_sesam_node_status():
         logging.error(f"Issue while connecting  the SESAM Health api {e}.")
         return 'NOT OK'
 
+
 def get_node_type():
-    try:
-        response = requests.get(url=config.SESAM_API_URL + '/api/datasets/config:aggregator-storage-node',
-                                headers={'Authorization': 'bearer ' + config.jwt})
-
-        if response.status_code == 200:
-            return 'MULTI'
-        else:
-            return 'SINGLE'
-
-    except Exception('Problem connecting to sesam node') as e:
-        raise e
+    response = requests.get(url=config.SESAM_API_URL + '/api/datasets/config:aggregator-storage-node',
+                            headers={'Authorization': 'bearer ' + config.jwt})
+    if response.status_code == 200:
+        return 'MULTI'
+    else:
+        return 'SINGLE'
 
 
 def get_subnodes_status(subnodes):
@@ -175,6 +171,7 @@ def prepare_payload(status_data):
             except Exception as e:
                 logging.error('Failed to send email because of {}'.format(e))
             status_data = 'major_outage'
+        exit(0)
         update_status_page(status_data)
 
 
@@ -193,7 +190,7 @@ if __name__ == '__main__':
             prepare_payload(get_sesam_subnodes_status())
         else:
             prepare_payload(get_sesam_node_status())
-    except Exception as e:
-        logging.error(f"Issue getting node type, {e}")
-        prepare_payload('Issue getting node type')
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Issue getting node type because of error: '{e}'")
+        prepare_payload(f"Issue getting node type because of error: '{e}'")
     sys.exit(0)
