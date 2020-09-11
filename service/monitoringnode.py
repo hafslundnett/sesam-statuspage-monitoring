@@ -171,7 +171,6 @@ def prepare_payload(status_data):
             except Exception as e:
                 logging.error('Failed to send email because of {}'.format(e))
             status_data = 'major_outage'
-        exit(0)
         update_status_page(status_data)
 
 

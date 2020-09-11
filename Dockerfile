@@ -5,7 +5,6 @@ LABEL author="ravish.ranjan@sesam.io"
 RUN apk update
 RUN apk add tzdata
 RUN apk add openssh
-RUN apk --no-cache add ca-certificates
 RUN rm -f /etc/localtime
 RUN ln -s /usr/share/zoneinfo/Europe/Oslo /etc/localtime
 RUN pip3 install --upgrade pip
